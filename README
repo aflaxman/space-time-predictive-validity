@@ -1,0 +1,53 @@
+This project is an effort to validate and compare space-time smoothing methods
+
+plan for now:
+
+python script to generate noisy simulation data from 45q15 male estimates.
+
+output format is a csv file with columns labeled::
+
+    iso3, country, region, super-region, year, sex, age, y, se, x_1, x_2, x_3, ...
+
+file should rows for each ihme standard country, for each year 1970 to 2010 (for sex=male, and age='' for now)
+
+big question:  what is y? (and what is se?)
+
+sometimes y = ''   [1]
+otherwise y = rnormal(logit(45q15), se**-2.)   [2]
+
+
+[1] decision for making y == '' could be::
+
+    for 20% of rows, chosen at random
+    for 20% of countries, chosen at random
+    forecasting and backcasting (drop earliest/latest 20% of years)
+    compositional bias, e.g. drop with probability proportional to 45q15
+    missingness patterns from child, maternal, ihd
+
+
+[2] se could be::
+
+    constant
+    f(x_i) for some x_i
+    f(45q15) "heteroskedastic"
+    two constants, large and small, selected randomly with small and large probability "heavy-tail error"
+
+
+
+1.  need a script (in python or otherwise) that messes up data in this format, but with complete data for column 'y'
+
+    $ python simulate_noisy_data.py --missing=compositionalbias --error=heavytail < gold_45q15m.csv > noisy_45q15m.csv
+
+2.  have competing smoothing approach that take the results of this and create estimates in compatible format
+
+    $ python nest_gp.py < noisy_45q15m.csv > estimate_45q15m.csv
+    $ R --script='my_loess.r' < noisy_45q15m.csv > estimate_45q15m.csv
+
+3.  need a script that compares the results of the estimate to the gold standard
+
+    $ python compare_estimate_to_gold.py estimate_45q15m.csv gold_45q15m.csv
+
+4. master script to run simulate_noisy_data, a given model, and compare_estimate_to_gold multiple times and with different patterns of missingness.
+
+    $ python master.py gold_45q15m.csv
+

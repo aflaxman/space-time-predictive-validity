@@ -51,3 +51,54 @@ otherwise y = rnormal(logit(45q15), se**-2.)   [2]
 
     $ python master.py gold_45q15m.csv
 
+
+
+Additional Notes:
+
+Eureqa: Possibly a good model for the GPR machine?
+
+Eureqa: Takes data, looks for a functional relationship between the
+columns.  You specify which variable you would like as a function of
+which others, you can tell it a lot about what you want the function
+to look like, and it finds some functions within your specifications
+that are minimal w.r.t. the error metric you choose.
+ 
+Like DisMod, we would like to take fairly complicated alorithms and
+put them in a framework where they are easy to use.  SPK is another
+good example.
+
+Testing platform for Age-Space-Time smoother: Adult mortality
+estimates from the Lancet paper as the gold standard.  Noise them up,
+see how well the smoother gets them back to where they were.  How we
+noise them up is an open question.
+
+Like Eureqa, we may want to make our smoother so that users can choose
+which components - GPR, spline, etc. - will go into it.
+
+We should make sure we're not duplicating something that has already
+been done.  We haven't yet found something that does exactly what we
+would like.  How problem-specific is our goal?  This would be widely
+useful around IHME.  If we want it to be useful beyond IHME, good
+documentation and well-worked examples are essential.
+
+Common inputs: 
+a csv file with columns labeled::
+
+    subregion, year, sex, age, y, se, x_1, x_2, x_3, ...
+
+y and se may both be '' (empty string)
+
+additionally, a csv representing the distance metric on subregions:
+subregion_i, subregion_j, distance between subregion_i and subregion_j
+
+Perhas something more general, i.e. you can specify a heirarchy using
+any variables.  At least a heirarchy, in terms of groupings, for the
+spatial component.
+
+
+options:
+include sex in model?
+
+another goal:
+make using cluster easy and transparent
+
